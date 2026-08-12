@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=860">
+<title>Лекция 4 · Лаборатория активного ума: управление</title>
+<style>
+  :root{
+    --navy:#13294B;
+    --navy-2:#1C3A66;
+    --gold:#B8893B;
+    --gold-deep:#8A6526;
+    --ink:#222b36;
+    --muted:#5C6B7D;
+    --line:rgba(184,137,59,.45);
+    --soft:rgba(35,48,63,.14);
+    --terra:#C56B45;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:#E9E5DC;
+    font-family:Georgia,'Times New Roman',serif;
+    color:var(--ink);
+    -webkit-text-size-adjust:100%;
+    text-size-adjust:100%;
+  }
+  .bar{
+    position:sticky;top:0;z-index:20;
+    background:#fff;
+    border-bottom:1px solid var(--line);
+    padding:12px 24px;
+    display:flex;align-items:center;justify-content:flex-end;
+    gap:12px;
+  }
+  .bar .brand{
+    margin-right:auto;
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-weight:700;
+    font-size:13px;
+    color:var(--navy);
+  }
+  #btnPrint{
+    background:var(--navy);
+    color:#fff;
+    border:none;
+    padding:10px 20px;
+    border-radius:7px;
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:.02em;
+    cursor:pointer;
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:rgba(184,137,59,.35);
+  }
+  #btnPrint:hover{background:var(--navy-2)}
+
+  .deck{max-width:860px;margin:32px auto;padding:0 16px 60px}
+
+  .slide{
+    position:relative;
+    background:#fff;
+    width:100%;
+    min-height:1120px;
+    padding:72px 70px 76px;
+    margin-bottom:28px;
+    border-radius:6px;
+    box-shadow:0 1px 3px rgba(19,41,75,.08), 0 10px 30px rgba(19,41,75,.06);
+  }
+  .slide::after{
+    content:"НИИ: Практик · Модуль 4 · Лекция 4 · 11.08.2026";
+    position:absolute;left:70px;bottom:32px;
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--muted);
+  }
+  .slide::before{
+    content:"";
+    position:absolute;right:70px;bottom:38px;
+    width:30px;height:2px;background:var(--gold);
+  }
+
+  /* Title slide */
+  .slide.title .masthead{
+    display:flex;align-items:center;gap:14px;
+    padding-bottom:18px;border-bottom:1px solid var(--line);
+    margin-bottom:26px;
+  }
+  .logo-mark{flex:0 0 auto}
+  .masthead-text .org{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-weight:800;font-size:16px;color:var(--navy);
+  }
+  .masthead-text .authors{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-size:12.5px;color:var(--muted);margin-top:2px;
+  }
+  .kicker{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    text-transform:uppercase;letter-spacing:.14em;
+    font-size:11px;font-weight:700;color:var(--gold-deep);
+    margin-bottom:10px;
+  }
+  h1{
+    font-family:Georgia,serif;
+    font-weight:800;
+    font-size:38px;
+    line-height:1.14;
+    color:var(--navy);
+    margin:0 0 12px;
+  }
+  .subtitle{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-weight:700;font-size:17px;color:var(--gold-deep);
+    margin:0 0 18px;
+  }
+  .lede{
+    font-family:Georgia,serif;
+    font-style:italic;color:var(--muted);
+    font-size:15.5px;line-height:1.65;
+    max-width:640px;
+  }
+  .toc{margin-top:34px;border-top:1px solid var(--line)}
+  .toc .row{
+    display:flex;align-items:center;gap:14px;
+    padding:15px 0;border-bottom:1px solid var(--line);
+  }
+  .toc .row b{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-size:14.5px;color:var(--ink);font-weight:700;
+  }
+  .toc-label{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    text-transform:uppercase;letter-spacing:.12em;
+    font-size:11px;font-weight:700;color:var(--gold-deep);
+    margin-bottom:2px;
+  }
+
+  /* Chapter header */
+  .part{display:flex;align-items:center;gap:12px;margin:0 0 24px}
+  .dot{
+    flex:0 0 auto;width:30px;height:30px;border-radius:50%;
+    background:var(--navy);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Helvetica Neue',Arial,sans-serif;font-weight:800;font-size:14px;
+    margin-right:12px;
+  }
+  .part .label{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    text-transform:uppercase;letter-spacing:.1em;
+    font-size:13px;font-weight:700;color:var(--gold-deep);
+  }
+
+  h2{font-family:Georgia,serif;font-weight:800;font-size:21px;color:var(--navy);margin:26px 0 10px}
+  h3{font-family:Georgia,serif;font-weight:800;font-size:17px;color:var(--navy);margin:20px 0 8px}
+  p{font-size:15.5px;line-height:1.72;margin:0 0 15px;color:var(--ink)}
+  p.muted{color:var(--muted)}
+  b{color:var(--navy)}
+
+  .quote{
+    position:relative;
+    background:#FBF7EF;
+    border:1.5px solid var(--gold);
+    border-radius:10px;
+    padding:22px 30px 22px 54px;
+    font-family:Georgia,serif;
+    font-weight:700;font-style:normal;
+    color:var(--navy);
+    font-size:16px;line-height:1.6;
+    margin:20px 0;
+  }
+  .quote::before{
+    content:"\201C";
+    position:absolute;left:16px;top:2px;
+    font-size:46px;line-height:1;
+    color:var(--gold);font-family:Georgia,serif;font-weight:700;
+  }
+  .quote .src{
+    display:block;margin-top:10px;
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    font-weight:700;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--gold-deep);
+  }
+
+  .reflect{
+    background:var(--navy);color:#fff;
+    border-radius:10px;padding:20px 26px;margin:20px 0;
+  }
+  .rf-h{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    text-transform:uppercase;letter-spacing:.1em;
+    font-size:11.5px;font-weight:700;color:#D9C48F;
+    margin-bottom:10px;
+  }
+  .reflect p{font-family:'Helvetica Neue',Arial,sans-serif;font-size:14.5px;line-height:1.6;color:#fff;margin:0}
+  .reflect b{color:#F0DFB8}
+
+  .brainbox{
+    border:1.5px solid var(--navy);
+    border-radius:10px;padding:20px 26px;margin:20px 0;background:#fff;
+  }
+  .bb-h{font-family:Georgia,serif;font-weight:800;font-size:16.5px;color:var(--navy);margin-bottom:10px}
+  .brainbox p{margin:0 0 10px}
+  .brainbox p:last-child{margin-bottom:0}
+
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0}
+  .mini{border:1.5px solid var(--soft);border-top:3px solid var(--gold);border-radius:10px;padding:16px 18px}
+  .mini.intu{border-top-color:var(--terra)}
+  .tag{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    text-transform:uppercase;letter-spacing:.08em;
+    font-size:11px;font-weight:700;color:var(--gold-deep);margin-bottom:8px;
+  }
+  .mini.intu .tag{color:var(--terra)}
+  .mini ul{margin:0;padding-left:18px;font-size:14px;line-height:1.62;color:var(--ink)}
+  .mini li{margin-bottom:5px}
+
+  .rcards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:24px 0}
+  .rcard{border:1.5px solid var(--soft);border-radius:10px;padding:26px 22px;background:#FBF9F5;min-height:260px}
+  .rc-name{font-family:Georgia,serif;font-weight:800;font-size:18px;color:var(--navy);margin-bottom:6px}
+  .rc-sub{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    text-transform:uppercase;letter-spacing:.06em;font-size:11px;
+    font-weight:700;color:var(--gold-deep);margin-bottom:12px;
+  }
+  .rcard p{font-size:15px;line-height:1.65;margin:0;color:var(--ink)}
+
+  .formula{
+    border:1.5px solid var(--gold);border-radius:10px;background:#FBF7EF;
+    padding:20px 26px;text-align:center;margin:20px 0;
+    font-family:Georgia,serif;font-size:15.5px;line-height:1.6;color:var(--ink);
+  }
+  .formula b{color:var(--navy)}
+
+  .layers{display:flex;flex-direction:column;gap:10px;margin:20px 0}
+  .layer{
+    background:#FBF9F5;border:1px solid var(--soft);border-radius:8px;
+    padding:14px 18px;display:flex;gap:12px;align-items:baseline;
+  }
+  .layer span{
+    font-family:'Helvetica Neue',Arial,sans-serif;font-weight:800;color:var(--gold-deep);
+    flex:0 0 auto;margin-right:4px;
+  }
+  .layer p{margin:0;font-size:14.5px}
+
+  .takeaway{background:var(--navy);color:#fff;border-radius:10px;padding:24px 28px;margin:26px 0 0}
+  .ta-h{
+    font-family:'Helvetica Neue',Arial,sans-serif;
+    text-transform:uppercase;letter-spacing:.1em;font-size:12px;font-weight:700;
+    color:#D9C48F;margin-bottom:10px;
+  }
+  .takeaway p{margin:0 0 10px;font-size:15px;line-height:1.68;color:#fff}
+  .takeaway p:last-child{margin-bottom:0}
+  .takeaway b{color:#F0DFB8}
+
+  a{color:var(--gold-deep)}
+
+  @page{ size:A4; margin:0; }
+  @media print{
+    html,body{ background:#fff; margin:0; padding:0 }
+    .bar{ display:none }
+    .deck{ margin:0; padding:0; max-width:none }
+    .slide{
+      box-shadow:none; margin:0; border-radius:0;
+      width:210mm; min-height:297mm;
+      padding:40px 48px 44px;
+      page-break-after:always;
+      break-after:page;
+    }
+    .slide:last-child{ page-break-after:auto; break-after:auto }
+    .slide::after{ left:48px }
+    .slide::before{ right:48px }
+    h1{ font-size:32px }
+    h2{ font-size:19px; margin:18px 0 8px }
+    h3{ font-size:15.5px; margin:14px 0 6px }
+    p{ font-size:13.5px; line-height:1.56; margin:0 0 10px }
+    .lede{ font-size:14px; line-height:1.5 }
+    .quote{ font-size:14px; line-height:1.46; padding:16px 24px 16px 44px; margin:12px 0 }
+    .quote::before{ font-size:36px; left:14px }
+    .reflect,.brainbox{ padding:14px 20px; margin:12px 0 }
+    .reflect p,.brainbox p{ font-size:13px; line-height:1.48; margin:0 0 7px }
+    .bb-h,.rf-h{ margin-bottom:6px }
+    .duo,.rcards{ gap:12px; margin:12px 0 }
+    .mini{ padding:12px 14px }
+    .mini ul{ font-size:12.5px; line-height:1.48 }
+    .rcard{ padding:11px 13px }
+    .rcard p{ font-size:12px; line-height:1.42 }
+    .formula{ font-size:13.5px; line-height:1.46; padding:14px 20px; margin:12px 0 }
+    .layers{ gap:7px; margin:12px 0 }
+    .case{ margin:14px 0; padding-top:12px }
+    .case-name{ font-size:14.5px }
+    .takeaway{ padding:16px 22px; margin:16px 0 0 }
+    .takeaway p,.takeaway li{ font-size:13px; line-height:1.5 }
+  }
+</style>
+</head>
+<body>
+  <div class="bar">
+    <div class="brand">НИИ: Практик · Лекция 4</div>
+    <button id="btnPrint">Сохранить / Распечатать (PDF)</button>
+  </div>
+
+  <div class="deck">
+
+    <!-- TITLE -->
+    <div class="slide title">
+      <div class="masthead">
+        <img class="logo-mark" width="40" height="46" alt="НИИ Практик" src="data:image/png;base64,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">
+        <div class="masthead-text">
+          <div class="org">НейроИнтуитивный интеллект: Практик</div>
+          <div class="authors">Дмитрий Рустамович Ягудин · Изабелла Найманова</div>
+        </div>
+      </div>
+
+      <div class="kicker">Модуль 4 · Лекция 4 · Психическая устойчивость</div>
+      <h1>Лаборатория активного ума: управление</h1>
+      <div class="subtitle">Как сохранять направление к цели, когда меняется состояние</div>
+      <p class="lede">На прошлой встрече разбиралась физическая адаптивность – первый элемент формулы НИИ. Сегодня – второй элемент, психическая устойчивость, без которой, по сути, не срабатывает вся предыдущая работа с телом. Разговор пойдёт о том, чем устойчивость отличается от неподвижности, чем теоретический ум отличается от динамичного, почему возбуждение перед сложной задачей – это не опасность и не стресс, и что конкретно делать каждый день, чтобы возвращать себе управление после любого сбоя.</p>
+
+      <div class="toc">
+        <div class="row"><span class="dot">1</span><div><div class="toc-label">Часть 1</div><b>Психическая устойчивость: гибкость, а не неподвижность</b></div></div>
+        <div class="row"><span class="dot">2</span><div><div class="toc-label">Часть 2</div><b>Два ума: теоретический и динамичный. Мышление полководца</b></div></div>
+        <div class="row"><span class="dot">3</span><div><div class="toc-label">Часть 3</div><b>Цель, задача, чувство и аффект</b></div></div>
+        <div class="row"><span class="dot">4</span><div><div class="toc-label">Часть 4</div><b>Стресс и физиология: возбуждение – не опасность</b></div></div>
+        <div class="row"><span class="dot">5</span><div><div class="toc-label">Часть 5</div><b>Метод РЗВ: распознать, замедлить, вернуть. От устойчивости к антихрупкости</b></div></div>
+        <div class="row"><span class="dot">6</span><div><div class="toc-label">Часть 6</div><b>Что делать дальше</b></div></div>
+      </div>
+    </div>
+
+        <div class="slide" id="c1a">
+      <div class="part"><span class="dot">1</span><span class="label">Психическая устойчивость: гибкость, а не неподвижность</span></div>
+      <h2>Что это такое и зачем она нужна</h2>
+
+      <p>Тема заявлена сразу как одна из важнейших для любого человека, который так или иначе ищет себя и хочет иметь постоянную направленность в своих эмоциях и чувствах. Потому что самое тяжёлое для человека – не сама боль и не сам дискомфорт, а невозможность куда-то это направить. Если есть потенциал, ощущения, чувства – их надо направлять. Если не получается, человек даже в самых лучших жизненных ситуациях чувствует себя чуть-чуть несчастным и как будто обременённым: то, что у него есть, не востребовано и не используется.</p>
+
+      <div class="formula"><b>Психическая устойчивость</b> – способность сохранять и восстанавливать целевую направленность психики, удерживая свой операционный ритм</div>
+
+      <p>Психика постоянно куда-то устремлена: любопытство, интерес, знание. Устойчивость – это способность сохранять именно то направление, которое было выбрано, и не уходить в объяснения и противодействие.</p>
+
+      <div class="quote">Психическая устойчивость – это способность не отдавать никому право управлять вами.</div>
+
+      <p>Логика здесь простая. Каждая эмоция создаёт импульс движения. Если кто-то управляет вашим состоянием, вы в этот момент становитесь объектом воздействия – и дальше остаётся только два варианта, оба плохих: либо направлять силы на противодействие, либо уходить от того, кто воздействует. И то и другое уводит с направления, в котором вы двигались.</p>
+
+      <div class="brainbox">
+        <div class="bb-h">Про «границы»</div>
+        <p>Отсюда и отношение к популярному слову «границы»: энергия, потраченная на защиту границ, – это энергия, потраченная на противодействие внешнему фактору, а не на движение к цели. Феномен вполне применим, когда двое сидят вечером на кухне и один спрашивает то, на что другому не хочется отвечать. К движению к цели он отношения не имеет. А если рядом есть человек, который постоянно на вас воздействует, задуматься стоит именно об этом.</p>
+      </div>
+    </div>
+
+    <div class="slide" id="c1b">
+      <div class="part"><span class="dot">1</span><span class="label">Психическая устойчивость: гибкость, а не неподвижность</span></div>
+      <h2>Устойчивость – не неподвижность</h2>
+
+      <p>Устойчивость часто понимают как неподвижность: будто устойчивый человек – это тот, кто должен стоять как камень и стоять на своём.</p>
+
+      <div class="quote">Это способность психики изменяться, не теряя направление.</div>
+
+      <p>Когда во время движения к цели приходят новые вводные данные, кто-то думает, что устойчивость – это продолжать делать ровно то же самое и проламывать ситуацию. Нет: нужно чуть отойти в сторону, пересмотреть, сделать по-другому – но постоянно держать устойчивое соединение с конечным результатом, будь то задача или цель.</p>
+
+      <div class="brainbox">
+        <div class="bb-h">Операционный ритм</div>
+        <p>Через какое-то время важно понять, какой у вас операционный ритм. Если за год в планах было пять пунктов, а реализовано два – значит, ваш операционный ритм равен двум.</p>
+        <p>Это не повод для самобичевания, а данные: они дают возможность правильно планировать дальше и понимать, каких результатов ждать и через какое время.</p>
+      </div>
+
+      <p>Ответственность при этом работает так: каждое ваше действие и каждое ваше мышление ответственны перед конечным результатом задачи – но не перед целью. Рассчитать заранее, что получится в конце, практически невозможно, а попытки рассчитать делают только хуже: возможно, было бы лучше в пять раз, но мы сами начинаем сужать эту историю.</p>
+
+      <div class="quote">Единственное, что мы можем контролировать, – это ответственность перед своей целью за свои действия. Ни за результат, ни за что-либо ещё.</div>
+
+      <p class="muted">Второй фактор устойчивости – видеть реальность относительно своей задачи: собрать все факты прежде, чем принимать решение, и не отворачиваться от того, где есть непонятное и напряжение. Теоретический ум подсказывает обратное: не обращай на это внимания, помни о конечной цели, хотя бы лежи в эту сторону – и всё получится. Многие так и лежат в сторону своей мечты, а когда она не сбывается, рисуют новую.</p>
+    </div>
+
+    <div class="slide" id="c2a">
+      <div class="part"><span class="dot">2</span><span class="label">Два ума: теоретический и динамичный</span></div>
+
+      <p>В движении к цели участвуют два принципиально разных режима мышления, и от того, какой из них ведёт, зависит, доходит ли дело до результата.</p>
+
+      <div class="duo">
+        <div class="mini">
+          <div class="tag">Теоретический ум</div>
+          <ul>
+            <li>Строит гипотезы и берёт ответственность только за конечный результат, а не за путь к нему.</li>
+            <li>Мыслит образами: простую вещь раскладывает на огромные объекты и очень сложные конструкции.</li>
+            <li>Красиво построенная гипотеза ценится высоко, даже если в корне неправильная, – мозг получает удовольствие от того, как красиво сказано.</li>
+            <li>Приходит не к действию, а к созерцанию: «давайте посмотрим, как это само всё решится».</li>
+            <li>Отсюда «я лишь направляю», «я лишь подсвечиваю тёмные стороны» – ответственности за результат нет.</li>
+          </ul>
+        </div>
+        <div class="mini intu">
+          <div class="tag">Динамичный ум</div>
+          <ul>
+            <li>Мыслит от задачи: конкретное действие приносит конкретный измеримый результат.</li>
+            <li>Постоянно сверяет своё состояние с целью.</li>
+            <li>Отвечает за каждое движение, каждую мысль и каждую эмоцию по отношению к задаче.</li>
+            <li>Превращает потенциал в действие.</li>
+            <li>Постоянно удерживает направление.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="quote">Мысль не должна заменять действие. Мысль должна приводить к действию.</div>
+
+      <p class="muted">Про проверку гипотез: одну – можно, это нормально. Но «давайте построим пять гипотез и будем полгода их проверять, и что-нибудь получится» – это уже полгода потраченного времени и потраченных денег. Обратить внимание стоит и на себя: если простая вещь начинает раскладываться на огромные конструкции, работает именно теоретический ум.</p>
+    </div>
+
+    <div class="slide" id="c2b">
+      <div class="part"><span class="dot">2</span><span class="label">Два ума: теоретический и динамичный</span></div>
+      <h2>Мышление полководца</h2>
+
+      <p>Чтобы показать динамичный ум в чистом виде, приводится Суворов – человек, выигравший огромное количество войн.</p>
+
+      <p>Он одномоментно удерживал всё: в мыслях, в знаниях, в понимании не было никакого хаоса. Знал каждого человека по имени. Знал его состояние – как он спит, что он ест. Понимал, какие у него ресурсы. Следил за тем, чтобы у людей была разная еда, следил за тем, чтобы был режим.</p>
+
+      <div class="quote">Все факты, которые касаются цели, – вот что такое динамичный ум.</div>
+
+      <p>Именно поэтому он выбирал время наступления и отступления: он понимал, что у него происходит. Там никогда не было «на авось» – и поэтому результативность была исключительной. Не было слепых зон.</p>
+
+      <div class="reflect">
+        <div class="rf-h">Зачем эта метафора</div>
+        <p>Чтобы вы тоже были внутри полководцами. У полководца проигрыш – это не «горе мне, пойду посплю, и всё пройдёт». Это жизнь. Это ответственность.</p>
+      </div>
+
+      <p class="muted">Отсюда и вопрос к себе: могу ли я что-то делать, если у меня нет до конца вводных данных? Это и называется «на авось» – рулетка, может получится, а может нет. Мозг такое очень любит. И именно там, где не хватает психической устойчивости, человек уходит в это дофаминовое состояние: «сейчас попробую, вдруг получится» – а пока пробую, попью латте. И сидит, пьёт латте, параллельно занимаясь процессами, в которых до конца ничего не понимает.</p>
+    </div>
+
+    <div class="slide" id="c2c">
+      <div class="part"><span class="dot">2</span><span class="label">Два ума: теоретический и динамичный</span></div>
+      <h2>Полгода красивой работы: история из практики</h2>
+
+      <p>До пандемии активно развивалась сеть студий с EMS-тренажёрами: много перелётов в Германию, официальное представительство немецкой компании Miha Bodytec, разработанные упражнения, которые немцы хотели выкупить за несколько тысяч евро. Три студии уже открыты и плотно работают, есть амбиция стать на этом рынке монополистом – знаний больше всех, большие связи в Европе. Нужен человек, с которым можно развивать дальше.</p>
+
+      <p>Находится знакомый: «Очень хочу быть вместе с тобой, мне эта тема нравится, я сам спортсмен». По профессии – бухгалтер. И почти сразу: «Слушай, раз я пришёл – давай сделаем ребрендинг». Нанимается агентство, придумывается новое название, готовится целый бренд-бук, закупается новая форма, меняются вывески. Поездки в центр, чай с ребятами, которые придумывают слоганы. Отдельной задачей становится душ: в самой крупной и самой работающей точке его не было, немцы спокойно обходились специальными полотенцами – но «вот там у всех душ, будет лучше». Студию закрывают, вскрывают пол, проводят воду, кладут плитку. Полтора-два месяца.</p>
+
+      <p>Всё это продолжается примерно полгода. За это время не делается ни одного шага, который напрямую увеличивал бы проходимость точек, выстраивал оперативную работу или повышал рентабельность. Проведённую воду в итоге оценили будущие арендодатели – салон красоты, которому она сильно помогла в их бизнесе.</p>
+
+      <div class="quote">Не было ответственности в каждом шаге за конечный результат.</div>
+
+      <p>Важно, что это не история про плохого партнёра. Ребрендинг был его мотивом – способом чем-то заниматься; а пропущенный момент оказался собственной ошибкой: параллельно шёл другой проект, внимание было занято, и фактор просто не заметили вовремя. Студии закрылись позже и не из-за ребрендинга: началась пандемия, а в тех районах администрация относилась к бизнесу крайне плохо.</p>
+    </div>
+
+    <div class="slide" id="c2d">
+      <div class="part"><span class="dot">2</span><span class="label">Два ума: теоретический и динамичный</span></div>
+      <h2>Задача или развлечение</h2>
+
+      <p>Из этой истории выводится рабочее различение, по которому дальше проверяется любое дело.</p>
+
+      <div class="reflect">
+        <div class="rf-h">Задача против развлечения</div>
+        <p>Задача – это то, у чего есть измеримый конечный результат: она реально двигает к цели. Всё остальное, каким бы красивым и увлекательным оно ни казалось, – развлечение, которое задачей не является и само по себе ничего не приносит.</p>
+      </div>
+
+      <p>Проверочный пример прямо с лекции: если сделать красивые ручки с названием компании – это задача? Нет. Это развлечение, оно ничего не принесёт.</p>
+
+      <p>И здесь же видно, как работает мозг: он тут же начинает хитрить – «но подождите, люди возьмут ручку и позвонят нам». Хотя вряд ли кто-то каждый день берёт ручки и звонит по ним. Это уже когнитивное искажение: мы подтягиваем конечный результат к той идее, которую сами придумали.</p>
+
+      <p class="muted">Задачу нужно ставить относительно цели: конкретное действие, которое приводит к конкретному результату. Всё, что не проходит эту проверку, – иллюзия работы, сколько бы времени и сил на неё ни уходило.</p>
+    </div>
+
+    <div class="slide" id="c3a">
+      <div class="part"><span class="dot">3</span><span class="label">Цель, задача, чувство и аффект</span></div>
+
+      <div class="formula">Цель задаёт вектор, куда двигаться.<br>Задача превращает этот вектор в конкретное действие.</div>
+
+      <p>Чувство здесь – постоянное направленное эмоциональное состояние к объекту. Это чуйка, интуиция, то, что движет вами к результату. Когда вы выбрали цель, у вас появилось чувство: что вы это сможете, что вы хотите это сделать. Чувство к тому, чего ещё нет, – это и есть предпринимательство.</p>
+
+      <div class="quote">Только удержание своего чувства к цели – единственная гарантия, которую вы можете себе дать.</div>
+
+      <p>Задача превращает вектор в конкретные действия – именно так вы материализуете свои чувства. Эмоция – это действие; эмоций без действия не существует. Если есть чувство к объекту, вы не можете не делать движений в его сторону, просто они маленькие.</p>
+
+      <div class="brainbox">
+        <div class="bb-h">Почему обязательно задача, а не сразу цель</div>
+        <p>В нервной системе есть поясная кора, расположенная рядом с лимбической системой. С точки зрения мозга большие задачи исполнять тяжело – их нужно разделять. Именно поэтому вектор превращает в конкретное действие задача: её можно измерить.</p>
+      </div>
+
+      <p class="muted">Готовых алгоритмов и конкретных схем здесь нет – есть только общее. Дальше работает чуйка: она находит людей, находит связи, находит ресурсы. «Потерял нюх» – это как раз про то, что человек ушёл в другую сторону.</p>
+    </div>
+
+    <div class="slide" id="c3b">
+      <div class="part"><span class="dot">3</span><span class="label">Цель, задача, чувство и аффект</span></div>
+
+      <div class="brainbox">
+        <div class="bb-h">Аффект и его накопление</div>
+        <p>Аффект – интенсивное эмоциональное состояние, способное временно изменить организацию психической и физической деятельности. Он почти всегда цепляется за что-то внешнее: резкое слово, неожиданную вводную, задачу, которая пошла не так.</p>
+        <p>Считается, что изменяет он временно. Но на практике двух аффектов относительно одной задачи уже достаточно, чтобы получилось чувство.</p>
+      </div>
+
+      <p>Дальше механика такая: один аффект пропустили и не стали с ним работать, второй пропустили, третий, четвёртый – и они накапливаются. Центры отрицательных эмоций укореняются, и появляется маленькое чувство, направленное уже не к цели, а против неё. Оно начинает потихоньку откусывать вашу цель и понемногу разворачивать вектор в другую сторону.</p>
+
+      <p>Именно так рождается предательская мысль всё бросить – она не приходит из ниоткуда, а собирается из серии непроработанных аффектов, каждый из которых по отдельности казался пустяком.</p>
+
+      <div class="quote">Это не вы виноваты. Так у нас работает мозг.</div>
+
+      <p class="muted">Понятнее всего это на отношении к ребёнку. Чувство к нему есть всегда, но бывают аффекты, когда оно искажается: вместо того чтобы понять и разобраться, мы бываем резки. Потом приходим в себя и себя ругаем – но обратного действия уже не вернёшь. Ребёнок аффект уже получил, и «извини, я тебя люблю» для него после этого значит гораздо меньше.</p>
+    </div>
+
+    <div class="slide" id="c3c">
+      <div class="part"><span class="dot">3</span><span class="label">Цель, задача, чувство и аффект</span></div>
+      <h2>Дофаминовые отношения к делу</h2>
+
+      <p>Отдельный узнаваемый сценарий – когда человек следует за каждым эмоциональным импульсом. Пока дело приносит быстрый результат и воодушевляет, он на подъёме: всё нравится, всё ладится. Но как только встречается первая по-настоящему сложная ситуация, которую нужно разбирать, включается «мне всё это разонравилось» – и человек уходит.</p>
+
+      <p>Ярче всего это видно на студентах: три месяца подъёма, всё получается, всё радует; потом спад – грусть, тоска, начинает прогуливать; потом снова скачок вверх, и снова вниз. Это и называется дофаминовыми скачками, то есть неустойчивой психикой.</p>
+
+      <p>Такие люди часто остаются одиноки: им тяжело удерживать устойчивый вектор, нужно, чтобы их постоянно веселили. Но даже если найдётся человек, готовый развлекать всю жизнь, гормонов на это не хватит – потратив всё, что есть, организм автоматически уводит вниз. Движения те же, взаимодействие то же, а удовольствия нет. Так работает биология.</p>
+
+      <div class="reflect">
+        <div class="rf-h">Диагностический вопрос</div>
+        <p>Прежде чем реагировать, стоит спросить себя: <b>«Я сейчас действую относительно задачи или относительно состояния?»</b> Если конкретных действий нет – вы попали в аффект. А все мысли вокруг («почему, что, зачем») – это уже его обслуживание, и мозг накидает их в любом количестве. Интернет обязательно поможет объяснить ваше состояние.</p>
+      </div>
+
+      <p class="muted">Сюда же относится и «а почему появился триггер, давайте разберёмся» – это кухонная психология, к целеполаганию отношения не имеющая. Любая мысль о триггере, хорошая или плохая, – уже его обслуживание. Займётесь отработкой триггеров – ваша цель будет тем временем истощаться.</p>
+    </div>
+
+    <div class="slide" id="c4a">
+      <div class="part"><span class="dot">4</span><span class="label">Стресс и физиология: возбуждение – не опасность</span></div>
+      <h2>Сбой видно на трёх уровнях</h2>
+
+      <p>Аффект не нужно вычислять задним числом – он проявляется сразу и одновременно в теле, в мышлении и в поведении. Заметить его можно по вполне конкретным признакам.</p>
+
+      <div class="rcards">
+        <div class="rcard">
+          <div class="rc-name">Тело</div>
+          <div class="rc-sub">физиология</div>
+          <p>Участившееся сердцебиение, поверхностное дыхание – нечем продохнуть. В теле появляется напряжение: сердце бьётся, а мышцы не совершают акта движения, и человек начинает подзамирать. Дальше – дрожь, замирание.</p>
+        </div>
+        <div class="rcard">
+          <div class="rc-name">Мышление</div>
+          <div class="rc-sub">когнитивный уровень</div>
+          <p>Сужается внимание: не получается что-то вспомнить, не получается сформулировать решение. Мысли начинают повторяться и крутиться. Самое тяжёлое – потеря альтернатив, когда не видно, как выйти из ситуации.</p>
+        </div>
+        <div class="rcard">
+          <div class="rc-name">Поведение</div>
+          <div class="rc-sub">действия</div>
+          <p>Ускорение и суета – первый и самый заметный признак. Бывает ступор, если человек встречает шок. И импульсивность: быстрые решения и действия, которые не успели соотнести с целью.</p>
+        </div>
+      </div>
+
+      <p>Возбуждение вызывает гипермобилизацию – и дальше срабатывает один из двух сценариев: либо симпатическая система, паника и множество хаотичных ненужных движений, либо парасимпатическая – человек замирает и стоит, уже не видя, что происходит.</p>
+
+      <p class="muted">По опыту службы спасения травмирующий фактор чаще остаётся у тех, кто был в замирании. Но и паника делает хуже: человек своими же действиями разгоняет состояние, выйти из ситуации не может, и дело нередко доходит до остановки сердца.</p>
+
+      <div class="quote">Ускоренное движение, суета – это первый признак, что вы попали в аффект: у вас изменилась динамика движения.</div>
+    </div>
+
+    <div class="slide" id="c4b">
+      <div class="part"><span class="dot">4</span><span class="label">Стресс и физиология: возбуждение – не опасность</span></div>
+      <h2>Трепет, который принимают за стресс</h2>
+
+      <p>Принято считать, что со стрессом надо бороться и постоянно себя успокаивать. Но не каждое возбуждение означает опасность. Значимая задача всегда содержит неопределённость – а это именно то, что дофамин любит больше всего: получится или не получится, и он сразу взлетает.</p>
+
+      <div class="brainbox">
+        <div class="bb-h">Откуда берётся возбуждение</div>
+        <p>У каждого есть привычный объём прожитых чувств и впечатлений – условно, десять единиц. Цель по определению находится за его пределами: это то, чего вы ещё не ощущаете и не понимаете.</p>
+        <p>Чтобы удерживать в нервной системе постоянное чувство к цели – а чем она масштабнее, тем дальше, – организм выделяет адреналин и норадреналин. Именно они поддерживают состояние эмоционального возбуждения и помогают удерживать ощущение.</p>
+      </div>
+
+      <p>В этот момент и появляется то самое состояние трепета – некоторая тревожность. И вот его чаще всего интерпретируют неправильно: по привычке думают, что это стресс. На самом деле сердце и гормональная система бьют по венам: действуй. Энергии стало больше, тело начало мобилизоваться и идти вперёд.</p>
+
+      <p>Узнаваемый пример – когда от предвкушения невозможно уснуть: поспали два часа, встали как огурцы, и хочется наконец встать и заняться делом. Это и есть то самое возбуждение: спать не получается, но сил полно.</p>
+
+      <div class="quote">Ощущение – не равно решение. Тело сообщает, сознание интерпретирует.</div>
+
+      <p class="muted">Тело подаёт первичный сигнал: сердцебиение – сигнал активации, напряжение – сигнал мобилизации к действию, дрожь – сигнал возбуждения. Если следом не происходит ни решения, ни движения, мозг достраивает интерпретацию сам: «опасно, я не справлюсь, это не моё, нужно всё бросить». Поэтому человек и не определён, пока он не шагает: кто он такой, понятно только в действии.</p>
+    </div>
+
+    <div class="slide" id="c4c">
+      <div class="part"><span class="dot">4</span><span class="label">Стресс и физиология: возбуждение – не опасность</span></div>
+      <h2>Масштаб цели равен выдерживаемому стрессу</h2>
+
+      <p>Отсюда следует прямая зависимость, которая объясняет, почему у разных людей разный масштаб целей.</p>
+
+      <div class="formula">Кто готов постоянно выдерживать стресс на двадцать условных единиц – поставит масштабную цель.<br>Кто пока выдерживает пять – поставит поменьше.</div>
+
+      <p>Но как только человек реализовал такую задачу, появляется опыт – это как мышца, она тренируется. Следующая задача берётся уже на десять единиц: конечный результат дальше, задачи внутри сложнее. Чем мощнее задача, тем больше выделяется стресса.</p>
+
+      <div class="quote">Организм вам не поставит задачу, которую вы не сможете выполнить.</div>
+
+      <p>И отсюда вывод, обратный привычному. «Мне некомфортно – значит, нужно остановиться» – так думать нельзя, всё ровно наоборот. Перед каждым новым сложным делом возникает временный трепет, и единственный способ роста личности – уметь превосходить свои телесные неудобства.</p>
+
+      <div class="reflect">
+        <div class="rf-h">Со страхом не работаем</div>
+        <p>Отдельный запрет: когда вы занимаетесь целью, работать со своим страхом нельзя. В этот момент вы перенаправляете ресурсы с внешнего движения внутрь себя.</p>
+        <p><b>Пусть ноги трясутся – но идут вперёд.</b></p>
+      </div>
+
+      <p class="muted">Испытывать страх и раздражение – нормально: окружающая среда постоянно подкидывает информацию. Ненормально – анализировать её и реагировать импульсивно. Можно испытывать напряжение и при этом продолжать действовать; без напряжения новые движения физиологически невозможны. Это как штанга: было пятнадцать килограммов, добавили пять – поднять это без напряжения не выйдет, как бы хитро мозг ни объяснял, что можно.</p>
+    </div>
+
+    <div class="slide" id="c5a">
+      <div class="part"><span class="dot">5</span><span class="label">Метод РЗВ: распознать, замедлить, вернуть. От устойчивости к антихрупкости</span></div>
+      <h2>Алгоритм возвращения управления</h2>
+
+      <p>Для восстановления управления после сбоя предлагается простой трёхшаговый алгоритм, доведённый до автоматизма – именно потому, что в момент аффекта размышлять сложнее обычного: при выраженном стрессовом возбуждении усиливается система быстрой мобилизации и одновременно снижается эффективность функций, связанных с префронтальным контролем. Высшие функции выключаются первыми, а чувство – это как раз высшая функция нервной системы, самая трудоёмкая.</p>
+
+      <div class="layers">
+        <div class="layer"><span>1</span><p><b>Распознать.</b> Заметить своё состояние: телесное ощущение поднялось не то, дыхание сбилось, мысли начали крутиться, появилась мутность. Именно для этого и делается практика «слышу – вижу – чувствую»: когда вы постоянно калибруетесь относительно своей задачи, тело обучается этому состоянию и вы замечаете, что оно изменилось.</p></div>
+        <div class="layer"><span>2</span><p><b>Замедлить.</b> Резкая физическая пауза, речевая пауза, дыхание. Анализировать ситуацию нельзя – анализ и есть обслуживание аффекта. Как в самбо и дзюдо: пропустить ситуацию вперёд, не разбирая её. Она вас ускорила – вы встали, и она пошла дальше.</p></div>
+        <div class="layer"><span>3</span><p><b>Вернуть.</b> Восстановить свой ритм, вернуться к исходной задаче и сделать следующее конкретное действие по выбранной траектории.</p></div>
+      </div>
+
+      <div class="quote">РЗВ – не техника успокоения. Это алгоритм восстановления.</div>
+
+      <div class="brainbox">
+        <div class="bb-h">Дыхание «4–8»</div>
+        <p>Вдох на четыре счёта, выдох на восемь, и так две минуты. За это время симпатическая система переходит в парасимпатическую – это не психология, а анатомия.</p>
+        <p>Цель – не убрать эмоцию, а снизить интенсивность возбуждения ровно настолько, чтобы вернулась возможность выбирать действие. Мозг сначала будет прямо саботировать – это нормальная часть привыкания, нужно просто делать раз за разом.</p>
+      </div>
+
+      <p class="muted">Таких людей вы видели: человека невозможно сбить – ни тортами, ни пирожными, ни приглашениями. «Не морочьте мне голову, я занят». Это и называется психически устойчивым: он обрубает ненужную информацию и удерживает вектор.</p>
+    </div>
+
+    <div class="slide" id="c5b">
+      <div class="part"><span class="dot">5</span><span class="label">Метод РЗВ: распознать, замедлить, вернуть. От устойчивости к антихрупкости</span></div>
+      <h2>Не смешивать контексты</h2>
+
+      <p>Многие всерьёз считают, что успех их цели зависит от того, какая у них погода в доме. И этому есть объяснение: мы в прямом смысле тащим свои эмоции относительно цели домой – и наоборот, впускаем в состояние относительно цели посторонние аффекты, никак с ней не связанные.</p>
+
+      <p>Отсюда же самое частое последствие: люди начинают спрашивать, что им делать, у некомпетентных людей – у своих близких. Просто потому, что эмоциональные состояния уже соединились. Мужчине не нужно приходить домой и рассказывать жене, как всё плохо: дома должно быть другое эмоциональное состояние.</p>
+
+      <div class="quote">Прежде чем начать новое дело, нужно закончить предыдущее: взять паузу, восстановиться и взять новый контекст.</div>
+
+      <p>Никулин сформулировал это точно: счастливый человек – тот, кто с удовольствием бежит на работу, потому что там интересные задачи, и с удовольствием бежит домой, потому что там что-то другое. Есть рабочая одежда, есть время погулять и отдохнуть – и только потом прийти домой.</p>
+
+      <div class="reflect">
+        <div class="rf-h">Рабочее состояние</div>
+        <p>Профессионалы делают это явно. Ведущий «Поля чудес»: камера включается – он весёлый, довольный, задорный. Камера выключается – он жёстко требует, чтобы всё было сделано как надо, потому что отвечает за результат. Камера включается – и он снова в кадре.</p>
+        <p>Именно поэтому его время стоит дорого. Рабочее состояние – это не продолжение того настроения, с которым человек пришёл, а осознанно включаемый режим.</p>
+      </div>
+
+      <p class="muted">Отсюда и отношение к многозадачности: «Мне нужно сделать одно дело и делать его очень хорошо». Пауза перед работой – это тоже часть задачи: посидели, попили воды, подышали «4–8», и мозг переключается ассоциативно на то, чем вы занимаетесь.</p>
+    </div>
+
+    <div class="slide" id="c5c">
+      <div class="part"><span class="dot">5</span><span class="label">Метод РЗВ: распознать, замедлить, вернуть. От устойчивости к антихрупкости</span></div>
+      <h2>Свой ритм и расширение диапазона</h2>
+
+      <p>Сначала у многих получается удерживать направленное к цели чувство около получаса – и это уже нормальное число, если большого опыта раньше не было. Ритм неизбежно сбивается на бытовых ситуациях, и это тоже нормально: задача не в том, чтобы держаться силой воли, а в том, чтобы постепенно обучать мозг увеличивать это время.</p>
+
+      <p>Рабочая единица – сессия сорок пять минут или час: заниматься целью, отдыхать, снова возвращаться, снова отдыхать. Это считается очень хорошим режимом. Ни в одном учебнике не написано, как правильно устроить именно ваш день, – своего ритма хватает на пару дней, а потом всё сбивается. Свой ритм можно узнать только в процессе.</p>
+
+      <div class="quote">Устойчивость – не равно постоянное напряжение.</div>
+
+      <div class="formula"><b>Устойчивость</b> – способность восстановить управление после сбоя.<br><b>Антихрупкость</b> – развитие способности сохранять деятельность в более широком диапазоне нагрузок благодаря опыту регулярного столкновения с ними</div>
+
+      <p>Механизм обучения один и тот же: нагрузка – распознавание – регуляция действия – повторение. Постепенно нервная система получает новый опыт: можно испытывать новые состояния и переходить через них, не теряя управления. Количество нейромодуляторов остаётся тем же – меняется реакция.</p>
+
+      <div class="quote">Цель – не стать нечувствительным. Нужно расширять диапазон состояний, внутри которого вы способны действовать.</div>
+
+      <p class="muted">Работает это так же, как у социофоба: сначала комфортно с одним человеком, потом с двумя, потом с тремя, потом с десятью. Это просто увеличение диапазона, и оно требует постепенности – резко «сейчас сделаем, и ты сразу будешь всё делать» не бывает.</p>
+    </div>
+
+    <div class="slide" id="c6">
+      <div class="part"><span class="dot">6</span><span class="label">Что делать дальше</span></div>
+      <h2>Домашнее задание</h2>
+
+      <p>Отвлечений фокуса от цели у всех много – отсюда и сомнения, и желание найти палочку-выручалочку. Поэтому задание строится вокруг одного навыка: убирать то, что к цели не относится.</p>
+
+      <div class="brainbox">
+        <div class="bb-h">Как работает фильтр</div>
+        <p>За то, какие сигналы дойдут до коры больших полушарий, отвечает гиппокамп: со всего тела постоянно идут импульсы, и он решает, подавать их на распознавание или нет.</p>
+        <p>Проверить это можно прямо сейчас – просто подумайте о своей пятке. Информация тут же придёт: до этого она была обрублена как неважная. Точно так же нужно научиться поступать со всем, что не касается вашего чувства к цели.</p>
+      </div>
+
+      <div class="layers">
+        <div class="layer"><span>1</span><p><b>Дыхание «4–8» – минимум семь-десять раз в день.</b> Первые две недели именно столько. Как только заметили, что закрутилось – взяли телефон, куда-то пошли, пошла мысль, – стоп и быстро отработать. Другого способа приучить мозг сбивать симпатический импульс нет.</p></div>
+        <div class="layer"><span>2</span><p><b>Пауза между контекстами.</b> Закончили одно дело – взяли паузу, восстановились, взяли новый контекст, и только потом взялись за следующее. Не приносить в задачу чужое эмоциональное состояние.</p></div>
+        <div class="layer"><span>3</span><p><b>Убирать информацию не по цели.</b> Всё, что не касается вашего чувства к цели, – снимать: не интересуясь, не углубляясь, не размышляя. То есть не обслуживать состояние.</p></div>
+      </div>
+
+      <div class="quote">Девяносто процентов времени люди думали о том, что никогда не случилось.</div>
+
+      <div class="takeaway">
+        <div class="ta-h">Итог лекции</div>
+        <p>Психическая устойчивость – это не неподвижность и не постоянное усилие держать себя в руках, а способность заметить сбой, ненадолго притормозить и вернуть себя к выбранному направлению, Цель очень хрупкая: два-три аффекта складываются – и мозг уже начинает её подъедать. Беречь нужно именно своё чувство к ней.</p>
+        <p><b>Распознавать – брать паузу – возвращать управление – и продолжать двигаться к цели. Устойчивость складывается из повторений, а не из одного героического рывка.</b></p>
+      </div>
+    </div>
+
+  </div>
+
+
+<script>
+(function(){
+  var btn = document.getElementById('btnPrint');
+  if (btn) btn.addEventListener('click', function(){ window.print(); });
+
+  function onTap(el, handler){
+    if (!el) return;
+    var startX = 0, startY = 0, moved = false;
+    el.addEventListener('touchstart', function(e){
+      moved = false;
+      var t = e.changedTouches[0];
+      startX = t.clientX; startY = t.clientY;
+    }, {passive:true});
+    el.addEventListener('touchmove', function(e){
+      var t = e.changedTouches[0];
+      if (Math.abs(t.clientX-startX) > 10 || Math.abs(t.clientY-startY) > 10) moved = true;
+    }, {passive:true});
+    el.addEventListener('touchend', function(e){
+      if (!moved){
+        e.preventDefault();
+        handler(e);
+      }
+    });
+  }
+  function tapOnce(selector, handler){
+    document.querySelectorAll(selector).forEach(function(el){ onTap(el, handler); });
+  }
+  tapOnce('#btnPrint', function(){ window.print(); });
+})();
+</script>
+
+
+</body></html>
